@@ -56,16 +56,20 @@ const Signup = () => {
     if (!userInfo.name || !userInfo.email || !userInfo.password) {
       toast.error("Credintial is Missing");
     } else {
-      createUserWithEmailAndPassword(auth, userInfo.email, userInfo.password)
+      createUserWithEmailAndPassword(auth, userInfo.email, userInfo.password, userInfo.name)
         .then((userCredential) => {
           sendEmailVerification(auth.currentUser).then(() => {
             navigate("/login");
+            const user = userCredential.user;
+
             updateProfile(auth.currentUser, {
               displayName: userInfo.name,
               photoURL: "/userphoto.png",
             });
-            toast.success("Data Sent");
+   
+          
           });
+          
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -78,7 +82,7 @@ const Signup = () => {
   return (
     <>
       <Toaster />
-      <div className="bg-gray-200">
+      <div className="bg-gray-200 py-18">
         <div className="max-w-[1100px] m-auto">
           <div className="flex items-center">
             <div className="w-1/2">

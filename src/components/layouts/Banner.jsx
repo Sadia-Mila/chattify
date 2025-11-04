@@ -5,7 +5,7 @@ const Banner = () => {
   return (
     <>
     
-    <div className="bg-[url(banner.png)] bg-no-repeat bg-center bg-cover py-[300px]">
+    <div className="bg-[url(banner.png)] bg-no-repeat bg-center bg-cover py-[340px]">
 
     </div>
     

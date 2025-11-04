@@ -17,17 +17,31 @@ import {
   getAuth,
   signInWithEmailAndPassword,
   updateProfile,
-  signInWithPopup, 
+  signInWithPopup,
   GoogleAuthProvider,
   signInWithRedirect,
 } from "firebase/auth";
 import { useNavigate } from "react-router";
 import { FcGoogle } from "react-icons/fc";
-
-
-
+import { useDispatch, useSelector } from "react-redux";
+import { userLoginInfo } from "@/slices/userSlice";
 
 const Login = () => {
+  const data = useSelector((state) => state.userInformation.value)
+  // console.log(data);
+  const dispatch = useDispatch()
+
+  const handleCustomBtn =() =>{
+    console.log("clicked");
+    
+    // const myData ={
+    //   name:"Reaz",
+    //   age: 46,
+    // }
+    dispatch(userLoginInfo(userInfo))
+
+  }
+  
   const navigate = useNavigate();
   const auth = getAuth();
   const provider = new GoogleAuthProvider();
@@ -61,38 +75,35 @@ const Login = () => {
   //password
 
   //handleLoginGoogle
-  const handleLoginGoogle =(e)=>{
-    
-      
-      signInWithRedirect(auth, provider)
-  .then((result) => {
-    console.log("ok");
-    
-    // This gives you a Google Access Token. You can use it to access the Google API.
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    const token = credential.accessToken;
-    // The signed-in user info.
-    const user = result.user;
-    // IdP data available using getAdditionalUserInfo(result)
-    // ...
-  }).catch((error) => {
-        
-    // Handle Errors here.
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    console.log(errorCode);
-    
-    // The email of the user's account used.
-    const email = error.customData.email;
-    // The AuthCredential type that was used.
-    const credential = GoogleAuthProvider.credentialFromError(error);
-    // ...
-  });
+  const handleLoginGoogle = (e) => {
+    e.preventDefault();
 
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // console.log("ok");
+        navigate("/dashboard");
 
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        // IdP data available using getAdditionalUserInfo(result)
+        // ...
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode);
 
-    
-  }
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
+  };
   //handleLoginGoogle
 
   //handleSignupSubmit
@@ -104,7 +115,7 @@ const Login = () => {
           // Signed in
           updateProfile(auth.currentUser, {
             displayName: userInfo.name,
-            photoURL: "userPhoto.png",
+            photoURL: "../../assets/userPhoto.png",
           })
             .then(() => {
               const user = userCredential.user;
@@ -131,7 +142,7 @@ const Login = () => {
   return (
     <>
       <Toaster />
-      <div className="bg-gray-200">
+      <div className="bg-gray-200 py-18">
         <div className="max-w-[1100px] m-auto">
           <div className="flex items-center">
             <div className="w-1/2">
@@ -140,58 +151,61 @@ const Login = () => {
                   <CardTitle className="font-nunito font-bold text-[34px] -mb-[13px] text-[#261848] text-center">
                     Login to your account!
                   </CardTitle>
-                  
+                  {/* <h2>{data}</h2> */}
+                  <button onClick={handleCustomBtn} className=" py-2 px-3 bg-violet-500 text-lg text-white rounded-lg">Send Data to the Dashboard</button>
                 </CardHeader>
                 <CardContent>
                   <form  onSubmit={handleSignupSubmit}>
-                    <div className="flex flex-col gap-6">
-                     
-                      <div className="grid gap-4 m-auto">
-                        <div className="border border-gray-300 rounded-lg p-2 w-50 focus-within:border-gray-500">
-                          <div className="flex items-center justify-center gap-x-2" onClick={handleLoginGoogle}>
-                            <FcGoogle className="text-2xl "/>
+                  <div className="flex flex-col gap-6">
+                    <div className="grid gap-4 m-auto">
+                      <div className="border border-gray-300 rounded-lg p-2 w-50 focus-within:border-gray-500">
+                        <div
+                          className="flex items-center justify-center gap-x-2"
+                          onClick={handleLoginGoogle}
+                        >
+                          <FcGoogle className="text-2xl " />
                           <h4>Login with Google</h4>
-                          </div>
                         </div>
                       </div>
-                       <div className="grid gap-4">
-                        <fieldset className="w-rull border border-gray-300 rounded-lg p-2 w-80 focus-within:border-gray-500">
-                          <legend>Email address</legend>
-                          <Input
-                            type="email"
-                            placeholder="m@example.com"
-                            onChange={handleEmailInput}
-                          />
-                        </fieldset>
-                      </div>
-                      <div className="grid gap-4">
-                        <fieldset className="w-rull border border-gray-300 rounded-lg p-2 w-80 focus-within:border-gray-500">
-                          <legend>Password</legend>
-                          <Input
-                            type="password"
-                            placeholder="******"
-                            onChange={handlePasswordInput}
-                          />
-                        </fieldset>
-                      </div>
                     </div>
-                    <CardFooter className="flex-col gap-4">
-                      <Button type="submit" className="w-sm mt-6">
-                        Login to Continue
-                      </Button>
-                    </CardFooter>
+                    <div className="grid gap-4">
+                      <fieldset className="w-rull border border-gray-300 rounded-lg p-2 w-80 focus-within:border-gray-500">
+                        <legend>Email address</legend>
+                        <Input
+                          type="email"
+                          placeholder="m@example.com"
+                          onChange={handleEmailInput}
+                        />
+                      </fieldset>
+                    </div>
+                    <div className="grid gap-4">
+                      <fieldset className="w-rull border border-gray-300 rounded-lg p-2 w-80 focus-within:border-gray-500">
+                        <legend>Password</legend>
+                        <Input
+                          type="password"
+                          placeholder="******"
+                          onChange={handlePasswordInput}
+                        />
+                      </fieldset>
+                    </div>
+                  </div>
+                  <CardFooter className="flex-col gap-4">
+                    <Button type="submit" className="w-sm mt-6">
+                      Login to Continue
+                    </Button>
+                  </CardFooter>
 
-                    <CardDescription className="font-nunito text-[16px] text-[#000000] mt-6">
-                      <div className="flex justify-center items-center gap-x-1">
-                        <p className="font-OpenSans text-[13px]">
-                          Don't have an account?
-                        </p>
+                  <CardDescription className="font-nunito text-[16px] text-[#000000] mt-6">
+                    <div className="flex justify-center items-center gap-x-1">
+                      <p className="font-OpenSans text-[13px]">
+                        Don't have an account?
+                      </p>
 
-                        <button className="font-OpenSans font-bold text-[#261848]">
-                          Sign Up
-                        </button>
-                      </div>
-                    </CardDescription>
+                      <button className="font-OpenSans font-bold text-[#261848]">
+                        Sign Up
+                      </button>
+                    </div>
+                  </CardDescription>
                   </form>
                 </CardContent>
               </Card>
